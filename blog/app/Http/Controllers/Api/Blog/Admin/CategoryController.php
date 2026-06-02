@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Api\Blog\Admin;
 //use Illuminate\Http\Request;
 use App\Http\Requests\BlogCategoryCreateRequest;
 use App\Models\BlogCategory;
+use App\Repositories\BlogCategoryRepository;
 use Illuminate\Support\Str;
 use App\Http\Requests\BlogCategoryUpdateRequest;
 
@@ -14,11 +15,16 @@ class CategoryController extends BaseController
     /**
      * Display a listing of the resource.
      */
+    public function __construct(private BlogCategoryRepository $blogCategoryRepository)
+    {
+        //parent::__construct();
+
+    }
     public function index()
     {
         //dd(__METHOD__);
-        $paginator = BlogCategory::orderBy('id', 'desc')->paginate(5);
-
+        //$paginator = BlogCategory::orderBy('id', 'desc')->paginate(5);
+        $paginator = $this->blogCategoryRepository->getAllWithPaginate(5);
         return $paginator;
     }
 
@@ -27,29 +33,46 @@ class CategoryController extends BaseController
      */
     public function store(BlogCategoryCreateRequest $request)
     {
-        //dd(__METHOD__);
-        $data = $request->all(); // Отримуємо масив даних, які надійшли з POST-запиту
-
-        // Якщо псевдонім (slug) порожній, генеруємо його з назви (title)
-        if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
+        $data = $request->input(); //отримаємо масив даних, які надійшли з форми
+        if (empty($data['slug'])) { //якщо псевдонім порожній
+            $data['slug'] = Str::slug($data['title']); //генеруємо псевдонім
         }
 
-        // Створюємо новий об'єкт моделі з отриманими даними
-        $item = new BlogCategory($data);
+        $item = (new BlogCategory())->create($data); //створюємо об'єкт і додаємо в БД
 
-        // Зберігаємо запис у базу даних
-        $result = $item->save();
-
-        if ($result) {
+        if ($item) {
             return [
                 'success' => true,
-                'message' => 'Успішно створено',
-                'item' => $item // Повертаємо новостворений запис
+                'message' => 'Успішно збережено'
             ];
         } else {
-            return ['message' => 'Помилка створення'];
+            return ['message' => 'Помилка збереження'];
         }
+
+
+        //dd(__METHOD__);
+//        $data = $request->all(); // Отримуємо масив даних, які надійшли з POST-запиту
+//
+//        // Якщо псевдонім (slug) порожній, генеруємо його з назви (title)
+//        if (empty($data['slug'])) {
+//            $data['slug'] = Str::slug($data['title']);
+//        }
+//
+//        // Створюємо новий об'єкт моделі з отриманими даними
+//        $item = new BlogCategory($data);
+//
+//        // Зберігаємо запис у базу даних
+//        $result = $item->save();
+//
+//        if ($result) {
+//            return [
+//                'success' => true,
+//                'message' => 'Успішно створено',
+//                'item' => $item // Повертаємо новостворений запис
+//            ];
+//        } else {
+//            return ['message' => 'Помилка створення'];
+//        }
     }
 
     /**
@@ -74,7 +97,7 @@ class CategoryController extends BaseController
     public function update(BlogCategoryUpdateRequest $request, $id)
     {
         // 1. Шукаємо об'єкт в базі по ID
-        $item = BlogCategory::find($id);
+        $this->blogCategoryRepository->getEdit($id);
 
         if (empty($item)) {
             return response()->json(['message' => "Запис id=[{$id}] не знайдено"], 404);

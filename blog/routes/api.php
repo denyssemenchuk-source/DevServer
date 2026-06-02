@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\Blog\Admin\CategoryController;
+use App\Http\Controllers\Api\Blog\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +21,6 @@ Route::group($groupData, function () {
         ->names('blog.admin.categories');
 });
 
+Route::group([ 'namespace' => 'App\Http\Controllers\Api\Blog', 'prefix' => 'blog'], function () {
+    Route::apiResource('posts', PostController::class)->names('blog.posts');
+});
