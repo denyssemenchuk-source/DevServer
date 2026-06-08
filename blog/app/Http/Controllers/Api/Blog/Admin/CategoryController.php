@@ -34,9 +34,7 @@ class CategoryController extends BaseController
     public function store(BlogCategoryCreateRequest $request)
     {
         $data = $request->input(); //отримаємо масив даних, які надійшли з форми
-        if (empty($data['slug'])) { //якщо псевдонім порожній
-            $data['slug'] = Str::slug($data['title']); //генеруємо псевдонім
-        }
+
 
         $item = (new BlogCategory())->create($data); //створюємо об'єкт і додаємо в БД
 
@@ -106,9 +104,6 @@ class CategoryController extends BaseController
         // 2. Отримуємо валідні дані
         $data = $request->all();
 
-        if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
-        }
 
         // 3. Оновлюємо дані об'єкта і зберігаємо в БД
         $result = $item->update($data);
