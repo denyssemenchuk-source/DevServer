@@ -9,6 +9,9 @@ use App\Repositories\BlogPostRepository;
 use App\Repositories\BlogCategoryRepository;
 use App\Http\Requests\BlogPostUpdateRequest;
 use Illuminate\Support\Str;
+use App\Jobs\BlogPostAfterCreateJob;
+use App\Jobs\BlogPostAfterDeleteJob;
+use DispatchesJobs;
 
 
 class PostController extends BaseController
@@ -35,11 +38,14 @@ class PostController extends BaseController
     public function store(BlogPostCreateRequest $request)
     {
         //
-        $data = $request->input(); //отримаємо масив даних, які надійшли з форми
+        $data = $request->input();
 
-        $item = (new BlogPost())->create($data); //створюємо об'єкт і додаємо в БД
+        $item = (new BlogPost())->create($data);
 
         if ($item) {
+            // Викликаємо Job правильним сучасним способом
+            BlogPostAfterCreateJob::dispatch($item);
+
             return ['success' => 'Успішно збережено'];
         } else {
             return ['msg' => 'Помилка збереження'];
@@ -88,6 +94,7 @@ class PostController extends BaseController
         $result = BlogPost::destroy($id); // софт деліт, запис лишається в базі, але стає "невидимим"
 
         if ($result) {
+            BlogPostAfterDeleteJob::dispatch($id)->delay(20);
             return [
                 'success' => true,
                 'message' => 'Статтю успішно видалено'
