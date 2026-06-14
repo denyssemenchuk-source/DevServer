@@ -9,6 +9,7 @@ use App\Models\BlogCategory;
 use App\Repositories\BlogCategoryRepository;
 use Illuminate\Support\Str;
 use App\Http\Requests\BlogCategoryUpdateRequest;
+use App\Http\Resources\Api\Blog\Admin\CategoryResource;
 
 class CategoryController extends BaseController
 {
@@ -22,10 +23,9 @@ class CategoryController extends BaseController
     }
     public function index()
     {
-        //dd(__METHOD__);
-        //$paginator = BlogCategory::orderBy('id', 'desc')->paginate(5);
         $paginator = $this->blogCategoryRepository->getAllWithPaginate(5);
-        return $paginator;
+
+        return CategoryResource::collection($paginator);
     }
 
     /**

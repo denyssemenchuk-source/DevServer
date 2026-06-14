@@ -12,7 +12,7 @@ use Illuminate\Support\Str;
 use App\Jobs\BlogPostAfterCreateJob;
 use App\Jobs\BlogPostAfterDeleteJob;
 use DispatchesJobs;
-
+use App\Http\Resources\Api\Blog\Admin\PostResource;
 
 class PostController extends BaseController
 {
@@ -27,9 +27,11 @@ class PostController extends BaseController
 
     public function index()
     {
+        // Отримуємо пагіновані дані з репозиторія (як у вас було раніше)
         $paginator = $this->blogPostRepository->getAllWithPaginate();
 
-        return $paginator;
+        // Обгортаємо пагінацію в API Ресурс
+        return PostResource::collection($paginator);
     }
 
     /**

@@ -22,6 +22,9 @@ class BlogPost extends Model
             'published_at',
         ];
 
+    protected $casts = [
+        'published_at' => 'datetime',
+    ];
     /**
      * Категорія статті
      *
