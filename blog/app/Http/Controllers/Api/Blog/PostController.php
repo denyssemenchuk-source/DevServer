@@ -30,7 +30,16 @@ class PostController extends BaseController
      */
     public function show(string $id)
     {
-        //
+        // Шукаємо пост за ID.
+        // Додаємо with(['user', 'category']), щоб одразу отримати ім'я автора та назву категорії
+        $post = BlogPost::with(['user', 'category'])->find($id);
+
+        if (!$post) {
+            return response()->json(['message' => 'Пост не знайдено'], 404);
+        }
+
+        // Повертаємо знайдений пост
+        return $post;
     }
 
     /**

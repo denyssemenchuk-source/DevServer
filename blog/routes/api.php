@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\Blog\Admin\CategoryController;
 use App\Http\Controllers\DiggingDeeperController; // Додано імпорт контролера
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\Blog\PostController as PublicPostController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -38,3 +39,6 @@ Route::group(['prefix' => 'digging_deeper'], function () {
         ->name('digging_deeper.prepareCatalog');
 
 });
+
+// Публічний маршрут для перегляду одного поста
+Route::get('blog/posts/{id}', [PublicPostController::class, 'show']);
