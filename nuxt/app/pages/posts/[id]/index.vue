@@ -58,7 +58,7 @@
 
       <div class="mt-6 text-center">
         <NuxtLink
-          to="/BlogPostsUi"
+          to="/BlogPost"
           class="inline-flex items-center gap-2 text-gray-500 hover:text-green-600 transition-colors font-medium"
         >
           <UIcon
@@ -92,7 +92,7 @@ interface Post {
 // Отримуємо доступ до параметрів URL
 const route = useRoute()
 
-// Беремо id з назви нашого файлу [id].vue
+// Беремо id з назви нашого файлу index.vue
 const postId = route.params.id
 
 // 2. Робимо запит, обов'язково вказавши тип <Post>
